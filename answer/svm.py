@@ -1,61 +1,41 @@
 """
     SVMアルゴリズムで手書き文字の判定を学習し、また結果を評価します.
 """
-import os
 from sklearn import svm, metrics
 import joblib
 
-# 学習用データの数
-SIZE_TRAINING = 500
+# 学習用のデータを読み込みます.
+with open("./csv/train-images.csv") as f:
+    images = f.read().split("\n")[:500]
+with open("./csv/train-labels.csv") as f:
+    labels = f.read().split("\n")[:500]
 
-# 検証用データの数
-SIZE_TEST = 500
+# 機械学習のモデルに読み込むために、データを変換します.
+images = [[int(i)/256 for i in image.split(",")] for image in images]
+labels = [int(l) for l in labels]
 
-def load_data(type_, size):
-    """
-        イメージとラベルのデータを取得して返却します.
-        またここで学習しやすいように、各数値を256で割って1以下の数値にします.
+# モデルの学習を行います.
+clf = svm.SVC()
+clf.fit(images, labels)
 
-        @param {String} type_ - one of { training | test }
-        @param {Int} size - 返却する要素数
-    """
+# テストデータを読み込みます.
+with open("./csv/test-images.csv") as f:
+    test_images = f.read().split("\n")[:500]
+with open("./csv/test-labels.csv") as f:
+    test_labels = f.read().split("\n")[:500]
 
-    with open(os.path.join("csv", "%s_image.csv" % type_)) as f:
-        images = f.read().split("\n")[:size]
-    with open(os.path.join("csv", "%s_label.csv" % type_)) as f:
-        labels = f.read().split("\n")[:size]
+# 機械学習のモデルに読み込むために、データを変換します.
+test_images = [[int(i)/256 for i in image.split(",")] for image in test_images]
+test_labels = [int(l) for l in test_labels]
 
-    images = [[int(i)/256 for i in image.split(",")] for image in images]
-    labels = [int(l) for l in labels]
+# 予測します.
+predict = clf.predict(test_images)
 
-    return images, labels
+# 予測精度を表示します.
+ac_score = metrics.accuracy_score(test_labels, predict)
+cl_report = metrics.classification_report(test_labels, predict)
+print("Accuracy:", ac_score)
+print(cl_report)
 
-
-if __name__ == "__main__":
-
-    # トレーニングデータを取得します.
-    images, labels = load_data("training", SIZE_TRAINING)
-
-    # 学習
-    print("学習開始")
-    clf = svm.SVC()
-    clf.fit(images, labels)
-
-    # テストデータを取得します.
-    images, labels = load_data("test", SIZE_TEST)
-
-    # 予測
-    print("予測開始")
-    predict = clf.predict(images)
-
-    # 結果表示
-    print("結果だよー")
-    ac_score = metrics.accuracy_score(labels, predict)
-    cl_report = metrics.classification_report(labels, predict)
-    print("正解率 = ", ac_score)
-    print(cl_report)
-
-    # 結果を保存する
-    if not os.path.exists("result"):
-        os.mkdir("result")
-    joblib.dump(clf, os.path.join("result", "svm.pkl"))
+# 結果を保存する
+joblib.dump(clf, "./result/svm.pkl")

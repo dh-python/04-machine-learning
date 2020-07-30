@@ -4,10 +4,12 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
     """HTMLページをレンダリングします."""
     return render_template("index.html")
+
 
 @app.route("/api/judge")
 def api_judge():
@@ -19,14 +21,15 @@ def api_judge():
     print(data)
 
     # 学習結果を読み込む.
-    pklfile = path.join("result", "svm.pkl")
-    clf = joblib.load(pklfile)
+    clf = joblib.load("./result/svm.pkl")
 
     # 予測する.
     predict = clf.predict([data])
     print("predict:", predict)
 
+    # 予測結果を返却します.
     return str(predict.tolist()[0])
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
