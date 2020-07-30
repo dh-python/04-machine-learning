@@ -13,7 +13,7 @@ def index():
 @app.route("/api/judge")
 def api_judge():
     """手書き文字を判定します"""
-    pass
+    return "-1"
 
 
 if __name__ == "__main__":
