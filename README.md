@@ -17,9 +17,17 @@
 利用するライブラリを `pip`でインストールします.  
 Macの場合 `pip3` コマンド、Windowsの場合 `pip` コマンドを実行します.
 ```
+# Windowsの場合
 pip install --upgrade flask
 pip install --upgrade numpy
 pip install --upgrade matplotlib
 pip install --upgrade scipy
 pip install --upgrade scikit-learn
+
+# Macの場合
+pip3 install --upgrade flask
+pip3 install --upgrade numpy
+pip3 install --upgrade matplotlib
+pip3 install --upgrade scipy
+pip3 install --upgrade scikit-learn
 ```
