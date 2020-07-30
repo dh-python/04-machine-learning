@@ -1,4 +1,3 @@
-from os import path
 import joblib
 from flask import Flask, render_template, request
 
